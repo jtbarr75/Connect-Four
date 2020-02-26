@@ -14,18 +14,14 @@ class Board
     grid = []
     6.times do |row|
       grid << []
-      7.times do
-        grid[row] << BLANK
-      end
+      7.times { grid[row] << BLANK }
     end
     grid
   end
 
   #Prints the grid
   def print_grid
-    grid.each do |row|
-      puts row.join(" ")
-    end
+    grid.each { |row| puts row.join(" ") }
   end
 
   #Places given piece to the lowest unoccupied spot in the grid
@@ -51,5 +47,30 @@ class Board
      available_cols << index if col.any? {|cell| cell == BLANK }
     end
     available_cols
+  end
+
+  def win?(piece)
+    grid.each do |row|
+      row.each_cons(4).each do |combination|
+        return true if combination.all? { |a| a == piece }
+      end
+    end
+    grid.transpose.each do |col|
+      col.each_cons(4).each do |combination|
+        return true if combination.all? { |a| a == piece }
+      end
+    end
+    padding = [*0..(grid.length - 1)].map { |i| [nil] * i }
+    padded1 = padding.reverse.zip(grid).zip(padding).map(&:flatten)
+    padded2 = padding.zip(grid).zip(padding.reverse).map(&:flatten)
+    diagonals_up = padded1.transpose.map(&:compact)
+    diagonals_down = padded2.transpose.map(&:compact)
+    diagonals = diagonals_up + diagonals_down
+    diagonals.each do |diag|
+      diag.each_cons(4).each do |combination|
+        return true if combination.all? { |a| a == piece }
+      end
+    end
+    false
   end
 end
