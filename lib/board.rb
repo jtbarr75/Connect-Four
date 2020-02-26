@@ -50,22 +50,46 @@ class Board
   end
 
   def win?(piece)
+    check_rows(piece) || check_cols(piece) || check_diagonals(piece)
+  end
+
+  #check each row for four consecutive pieces
+  def check_rows(piece)
     grid.each do |row|
       row.each_cons(4).each do |combination|
         return true if combination.all? { |a| a == piece }
       end
     end
+    false
+  end
+
+  #transpose grid so columns are subarrays then check those for four consecutive pieces
+  def check_cols(piece)
     grid.transpose.each do |col|
       col.each_cons(4).each do |combination|
         return true if combination.all? { |a| a == piece }
       end
     end
+    false
+  end
+
+  #create array of diagonals as subarrays then check for four consecutive pieces
+  def check_diagonals(piece)
+    #create padding array e.g. [[],[nil],[nil,nil]] etc
     padding = [*0..(grid.length - 1)].map { |i| [nil] * i }
+
+    #pad the grid on both sides to shift each row over i elements
     padded1 = padding.reverse.zip(grid).zip(padding).map(&:flatten)
-    padded2 = padding.zip(grid).zip(padding.reverse).map(&:flatten)
     diagonals_up = padded1.transpose.map(&:compact)
+
+    #pad the opposite direction to get diagonals the other way
+    padded2 = padding.zip(grid).zip(padding.reverse).map(&:flatten)
     diagonals_down = padded2.transpose.map(&:compact)
+
+    #combine all the diagonals
     diagonals = diagonals_up + diagonals_down
+
+    #check diagonals for groups of four
     diagonals.each do |diag|
       diag.each_cons(4).each do |combination|
         return true if combination.all? { |a| a == piece }
