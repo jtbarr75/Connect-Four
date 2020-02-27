@@ -2,8 +2,8 @@ class Board
   attr_reader :grid
 
   BLANK = "\u{25EF}"
-  LIGHT = "\u{263A}"
-  DARK = "\u{263B}"
+  DARK = "\u{263A}"
+  LIGHT = "\u{263B}"
 
   def initialize
     @grid = create_grid
@@ -11,12 +11,7 @@ class Board
 
   #Create a 6x7 grid of blank circles
   def create_grid
-    grid = []
-    6.times do |row|
-      grid << []
-      7.times { grid[row] << BLANK }
-    end
-    grid
+    grid = Array.new(6, Array.new(7, BLANK))
   end
 
   #Prints the grid
@@ -49,24 +44,15 @@ class Board
     available_cols
   end
 
+  #check rows and check rows with the grid transposed to check columns
   def win?(piece)
-    check_rows(piece) || check_cols(piece) || check_diagonals(piece)
+    check_rows(piece, grid) || check_rows(piece, grid.transpose) || check_diagonals(piece)
   end
 
   #check each row for four consecutive pieces
-  def check_rows(piece)
-    grid.each do |row|
+  def check_rows(piece, arr)
+    arr.each do |row|
       row.each_cons(4).each do |combination|
-        return true if combination.all? { |a| a == piece }
-      end
-    end
-    false
-  end
-
-  #transpose grid so columns are subarrays then check those for four consecutive pieces
-  def check_cols(piece)
-    grid.transpose.each do |col|
-      col.each_cons(4).each do |combination|
         return true if combination.all? { |a| a == piece }
       end
     end

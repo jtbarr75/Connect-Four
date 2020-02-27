@@ -3,8 +3,8 @@ require './lib/board'
 describe Board do
   before(:each) { @board = Board.new }
   B = "\u{25EF}"
-  LIGHT = "\u{263A}"
-  DARK = "\u{263B}"
+  DARK ||= "\u{263A}"
+  LIGHT ||= "\u{263B}"
 
   describe "#create_grid" do
     it "creates a 7x6 grid of #{B} (circles)" do
@@ -42,7 +42,7 @@ describe Board do
       #{B} #{B} #{B} #{B} #{B} #{B} #{B}
       #{B} #{B} #{B} #{B} #{B} #{B} #{B}
       #{B} #{B} #{B} #{B} #{B} #{B} #{B}
-      #{LIGHT} #{B} #{B} #{B} #{B} #{B} #{B}
+      #{DARK} #{B} #{B} #{B} #{B} #{B} #{B}
       EXPECTED
       expect { @board.print_grid }.to output(expected).to_stdout
     end
